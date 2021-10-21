@@ -1,0 +1,46 @@
+﻿@{
+  ViewBag.Title = "Home Page";
+}
+
+<div>
+  <h2>All Products</h2>
+  <ul id="products" />
+</div>
+
+<div>
+  <h2>Search by ID</h2>
+  <input type="text" id="prodId" size="5" />
+  <input type="button" value="Search" onclick="find();" />
+  <p id="product" />
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  var uri = "https://localhost:44364/api/products";
+  $(document).ready(function () {
+    // Send API request
+    $.getJSON(uri)
+      .done(function (data) {
+        // If success, display list products
+        console.log(data)
+        $.each(data, function (key, item) {
+          // Add list item
+          $('<li>', { text: formatItem(item) }).appendTo($('#products'));
+        });
+      });
+  });
+
+  function formatItem(item) {
+    return item.Name + ": $" + item.Price;
+  }
+
+  function find() {
+    var id = $('#prodId').val();
+    $.getJSON(uri + "/" + id)
+      .done(function (data) {
+        $('#product').text(formatItem(data));
+      })
+      .fail(function (err) {
+        $('#product').text("Error: " + err);
+      });
+  }
+</script>
